@@ -1,0 +1,30 @@
+{
+  "name": "fullstack-setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hackathon-Adav/fullstack-setup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hackathon-Adav/fullstack-setup/issues"
+  },
+  "homepage": "https://github.com/Hackathon-Adav/fullstack-setup#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.10.0",
+    "typescript-eslint": "^8.72.2"
+  }
+}
