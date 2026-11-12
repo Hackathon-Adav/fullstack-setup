@@ -214,8 +214,7 @@ psql postgres://app:app@db:5432/app -c "SELECT * FROM questions"
 
 | Machine     | Système     | Architecture | Testeur     | Durée       |
 | ----------- | ----------- | ------------ | ----------- | ----------- |
-| PC-ADAV     | Windows 11  | x86_64       | (à remplir) | (à remplir) |
-| (à remplir) | (à remplir) | (à remplir)  | (à remplir) | (à remplir) |
+| PC-ADAV     | Windows 11  | x86_64       | ADAV-MS | 15min |
 
 Pour ajouter votre machine après un test réussi, ouvrez une Pull Request qui complète ce tableau.
 
