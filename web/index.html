@@ -4,11 +4,73 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hackathon</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 720px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      #status {
+        color: #555;
+        font-size: 0.9rem;
+      }
+      form {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+      input {
+        flex: 1;
+        padding: 0.5rem;
+        font-size: 1rem;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+      }
+      li strong {
+        color: #222;
+      }
+      li em {
+        color: #555;
+        font-style: normal;
+      }
+    </style>
   </head>
   <body>
     <h1>Hackathon</h1>
-    <p id="health">Connexion à l'API…</p>
+    <p id="status">Connexion à l’API…</p>
+
+    <form id="ask-form">
+      <label for="question" style="position: absolute; left: -9999px"
+        >Question</label
+      >
+      <input
+        id="question"
+        name="question"
+        type="text"
+        required
+        placeholder="Ex. : Quelle est la capitale du Japon ?"
+      />
+      <button type="submit">Envoyer</button>
+    </form>
+
     <ul id="questions"></ul>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
