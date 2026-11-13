@@ -14,9 +14,9 @@ services:
       DATABASE_URL: postgresql://app:app@db:5432/app
       AI_BASE_URL: http://host.docker.internal:11434/v1
       AI_MODEL: llama3.2:1b
-      AI_API_KEY: ""
+      AI_API_KEY: ''
     extra_hosts:
-      - "host.docker.internal:host-gateway" # Linux : accès à Ollama sur l'hôte
+      - 'host.docker.internal:host-gateway' # Linux : accès à Ollama sur l'hôte
 
   db:
     image: postgres:17-alpine
@@ -24,17 +24,17 @@ services:
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
-      POSTGRES_DB: app   # ← crée la base "app" au premier démarrage
+      POSTGRES_DB: app # ← crée la base "app" au premier démarrage
     volumes:
       - ./db/data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      test: ['CMD-SHELL', 'pg_isready -U app -d app']
       interval: 5s
       timeout: 5s
       retries: 10
     ports:
-      - "5432:5432"
+      - '5432:5432'
 
 volumes:
   node_modules:
