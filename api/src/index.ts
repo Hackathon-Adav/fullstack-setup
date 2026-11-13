@@ -1,11 +1,12 @@
 import express from 'express';
 import pg from 'pg';
+import { existsSync } from 'node:fs';
 
-try {
-  process.loadEnvFile();
-} catch {
-  // Pas de .env : on garde l'environnement tel quel
-}
+// Charge api/.env quel que soit le répertoire de lancement.
+// - cwd = /workspace/api  → '.env' existe
+// - cwd = /workspace      → 'api/.env' existe
+const envPath = ['api/.env', '.env'].find(existsSync);
+if (envPath) process.loadEnvFile(envPath);
 
 const {
   DATABASE_URL,
@@ -13,22 +14,38 @@ const {
   AI_MODEL = 'llama3.2:1b',
   AI_API_KEY = '',
 } = process.env;
-const PORT = Number(process.env.PORT ?? 3000);
 
+if (!DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL manquante. Vérifiez api/.env (cf. api/.env.example).',
+  );
+}
+
+const PORT = Number(process.env.PORT ?? 3000);
 const db = new pg.Pool({ connectionString: DATABASE_URL });
 const app = express();
 app.use(express.json());
 
 app.get('/api/health', async (_req, res) => {
-  const { rows } = await db.query('SELECT version()');
-  res.json({ status: 'ok', db: rows[0].version });
+  try {
+    const { rows } = await db.query('SELECT version()');
+    res.json({ status: 'ok', db: rows[0].version });
+  } catch (err) {
+    console.error('[health]', err);
+    res.status(500).json({ status: 'error', error: (err as Error).message });
+  }
 });
 
 app.get('/api/questions', async (_req, res) => {
-  const { rows } = await db.query(
-    'SELECT * FROM questions ORDER BY id DESC LIMIT 10',
-  );
-  res.json(rows);
+  try {
+    const { rows } = await db.query(
+      'SELECT * FROM questions ORDER BY id DESC LIMIT 10',
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('[questions:list]', err);
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 app.post('/api/questions', async (req, res) => {
@@ -37,12 +54,17 @@ app.post('/api/questions', async (req, res) => {
     res.status(400).json({ error: 'Question manquante' });
     return;
   }
-  const answer = await ask(question);
-  const { rows } = await db.query(
-    'INSERT INTO questions (question, answer) VALUES ($1, $2) RETURNING *',
-    [question, answer],
-  );
-  res.status(201).json(rows[0]);
+  try {
+    const answer = await ask(question);
+    const { rows } = await db.query(
+      'INSERT INTO questions (question, answer) VALUES ($1, $2) RETURNING *',
+      [question, answer],
+    );
+    res.status(201).json(rows[0]);
+  } catch (err) {
+    console.error('[questions:create]', err);
+    res.status(502).json({ error: (err as Error).message });
+  }
 });
 
 async function ask(question: string): Promise<string> {
@@ -60,7 +82,9 @@ async function ask(question: string): Promise<string> {
   if (!response.ok) {
     throw new Error(`IA : ${response.status} ${await response.text()}`);
   }
-  const data = await response.json();
+  const data = (await response.json()) as {
+    choices: { message: { content: string } }[];
+  };
   return data.choices[0].message.content;
 }
 
